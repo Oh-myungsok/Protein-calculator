@@ -67,6 +67,10 @@ if seq:
     st.write(f"**Extinction Coefficient (280nm):** {ext} M^-1 cm^-1")
     st.write(f"**Isoelectric Point (pI):** {pI:.2f}")
 
+# 추가: Calibrated Con (A280nm) = Extinction Coefficient / Molecular Weight 
+    calibrated_con = ext / mw 
+    st.write(f"**Calibrated Con (A280nm):** {calibrated_con:.6f}")
+
     # pH 4.0 ~ 10.0, 0.5 간격으로 Net Charge 테이블 출력
     ph_values = np.arange(4.0, 10.5, 0.5)
     results = []
