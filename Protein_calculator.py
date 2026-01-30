@@ -72,7 +72,7 @@ with col2:
 # Reset 버튼 눌렀을 때 입력창을 완전히 빈 문자열로 초기화
 if reset:
     seq_input = ""
-    st.experimental_rerun()
+    st.rerun()   # 최신 Streamlit에서는 st.rerun() 사용
 
 # Submit 버튼 눌렀을 때만 계산 실행
 if submit and seq_input:
