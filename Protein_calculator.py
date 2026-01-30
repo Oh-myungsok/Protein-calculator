@@ -72,13 +72,13 @@ if seq:
     st.write(f"**Calibrated Con (A280nm):** {calibrated_con:.6f}")
 
 # 설명 문장 caption으로 추가 (한국어 + 영어) 
-     st.caption("Calibrated Con 값은 실제 A280nm 흡광도 측정 결과에 대해 " 
-                   "과대 또는 과소 추정될 수 있으므로, 반드시 실측 결과 값을 " 
-                   "Calibrated Con으로 나누어 해석해야 합니다.") 
-     st.caption("The Calibrated Con value may be over-estimated or under-estimated " 
-                   "relative to actual A280nm absorbance measurements, " 
-                    "and should always be interpreted by dividing the measured result " 
-                    "by the Calibrated Con.")
+    st.caption("Calibrated Con 값은 실제 A280nm 흡광도 측정 결과에 대해 " 
+                  "과대 또는 과소 추정될 수 있으므로, 반드시 실측 결과 값을 " 
+                  "Calibrated Con으로 나누어 해석해야 합니다.") 
+    st.caption("The Calibrated Con value may be over-estimated or under-estimated " 
+                  "relative to actual A280nm absorbance measurements, " 
+                  "and should always be interpreted by dividing the measured result " 
+                  "by the Calibrated Con.")
 
 
     # pH 4.0 ~ 10.0, 0.5 간격으로 Net Charge 테이블 출력
