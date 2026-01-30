@@ -54,14 +54,14 @@ def calc_pI(seq):
 # ---- Streamlit UI ----
 st.title("Protein Calculator")
 
-# 세션 상태 초기화
+# 세션 상태 초기화 (처음 실행 시 기본 서열 설정)
 if "sequence" not in st.session_state:
     st.session_state.sequence = "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE"
 
 # 입력창 (세션 상태 값 사용, key 지정)
 seq_input = st.text_area(
     "Enter protein sequence (single-letter code):",
-    st.session_state.sequence,
+    st.session_state.get("sequence", ""),   # clear 후에는 ""로 표시됨
     height=300,
     key="seq_input"
 )
@@ -73,9 +73,11 @@ with col1:
 with col2:
     reset = st.button("Reset")
 
-# Reset 버튼 → 세션 상태 전체 초기화
+# Reset 버튼 → 세션 상태 전체 초기화 + 입력창 비우기
 if reset:
     st.session_state.clear()   # 모든 세션 상태 초기화
+    st.session_state.sequence = ""   # sequence도 빈 문자열로 설정
+    st.session_state.seq_input = ""  # 입력창도 빈 문자열로 설정
     st.rerun()
 
 # Submit 버튼 → 계산 실행
@@ -129,3 +131,4 @@ if submit and seq_input:
     ax2.set_ylabel("Net Charge")
     ax2.set_title("Charge vs pH (0 ~ 14)")
     st.pyplot(fig2)
+
