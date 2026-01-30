@@ -24,11 +24,10 @@ pKa = {
 aa_extinction = {'W': 5500, 'Y': 1490, 'C': 125}
 
 def calc_mw(seq):
-    """분자량 계산: 아미노산 개별 분자량 합 - (펩타이드 결합 수 × 물 분자 질량)"""
     n = len(seq)
     total = sum(aa_weights.get(aa, 0) for aa in seq)
     if n > 1:
-        total -= (n - 1) * 18.015  # 펩타이드 결합 형성 시 빠지는 물(H2O)
+        total -= (n - 1) * 18.015
     return total
 
 def calc_extinction(seq):
@@ -38,11 +37,8 @@ def calc_extinction(seq):
 def net_charge(seq, pH):
     counts = Counter(seq)
     charge = 0
-    # N-term
     charge += 1 / (1 + 10**(pH - pKa['Nterm']))
-    # C-term
     charge -= 1 / (1 + 10**(pKa['Cterm'] - pH))
-    # Side chains
     for aa in ['D','E','C','Y']:
         charge -= counts[aa] / (1 + 10**(pKa[aa] - pH))
     for aa in ['H','K','R']:
@@ -55,28 +51,33 @@ def calc_pI(seq):
     idx = np.argmin(np.abs(charges))
     return pHs[idx]
 
-# Streamlit UI
+# ---- Streamlit UI ----
 st.title("Protein Calculator")
 
-# 입력창
-seq_input = st.text_area("Enter protein sequence (single-letter code):", 
-                         "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE", height=300)
+# 세션 상태 초기화
+if "sequence" not in st.session_state:
+    st.session_state.sequence = "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE"
 
-# 버튼 두 개 추가
+# 입력창 (세션 상태 값 사용)
+seq_input = st.text_area("Enter protein sequence (single-letter code):", 
+                         st.session_state.sequence, height=300)
+
+# 버튼 두 개
 col1, col2 = st.columns(2)
 with col1:
     submit = st.button("Submit")
 with col2:
     reset = st.button("Reset")
 
-# Reset 버튼 눌렀을 때 입력창을 완전히 빈 문자열로 초기화
+# Reset 버튼 → 세션 상태를 빈 문자열로 바꾸고 rerun
 if reset:
-    seq_input = ""
-    st.rerun()   # 최신 Streamlit에서는 st.rerun() 사용
+    st.session_state.sequence = ""
+    st.rerun()
 
-# Submit 버튼 눌렀을 때만 계산 실행
+# Submit 버튼 → 계산 실행
 if submit and seq_input:
     seq = seq_input.strip().upper().replace(" ", "").replace("\n", "")
+    st.session_state.sequence = seq  # 입력값을 세션 상태에 저장
 
     mw = calc_mw(seq)
     ext = calc_extinction(seq)
@@ -86,11 +87,9 @@ if submit and seq_input:
     st.write(f"**Extinction Coefficient (280nm):** {ext} M^-1 cm^-1")
     st.write(f"**Isoelectric Point (pI):** {pI:.2f}")
 
-    # 추가: Calibrated Con (A280nm) = Extinction Coefficient / Molecular Weight 
     calibrated_con = ext / mw if mw > 0 else 0
     st.write(f"**Calibrated Con (A280nm):** {calibrated_con:.6f}")
 
-    # 설명 문장 caption으로 추가 (한국어 + 영어) 
     st.caption("Calibrated Con 값은 실제 A280nm 흡광도 측정 결과에 대해 "
                "과대 또는 과소 추정될 수 있으므로, 반드시 실측 결과 값을 "
                "Calibrated Con으로 나누어 해석해야 합니다.")
@@ -99,7 +98,6 @@ if submit and seq_input:
                "and should always be interpreted by dividing the measured result "
                "by the Calibrated Con.")
 
-    # pH 4.0 ~ 10.0, 0.5 간격으로 Net Charge 테이블 출력
     ph_values = np.arange(4.0, 10.5, 0.5)
     results = []
     for ph in ph_values:
@@ -110,7 +108,6 @@ if submit and seq_input:
     st.subheader("Net Charge Table (pH 4.0 ~ 10.0, step 0.5)")
     st.table(df)
 
-    # 테이블과 같은 범위의 그래프 추가
     fig, ax = plt.subplots()
     ax.plot(df["pH"], df["Net Charge"], marker="o", linestyle="-", color="blue")
     ax.axhline(0, color='gray', linestyle='--')
@@ -119,7 +116,6 @@ if submit and seq_input:
     ax.set_title("Net Charge vs pH (4.0 ~ 10.0)")
     st.pyplot(fig)
 
-    # 기존 Charge vs pH 전체 범위 그래프도 유지
     pHs = np.linspace(0,14,200)
     charges = [net_charge(seq,pH) for pH in pHs]
     fig2, ax2 = plt.subplots()
