@@ -58,10 +58,26 @@ def calc_pI(seq):
 # Streamlit UI
 st.title("Protein Calculator")
 
-seq = st.text_area("Enter protein sequence (single-letter code):", 
-                   "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE", height=300)
+# 입력창
+seq_input = st.text_area("Enter protein sequence (single-letter code):", 
+                         "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE", height=300)
 
-if seq:
+# 버튼 두 개 추가
+col1, col2 = st.columns(2)
+with col1:
+    submit = st.button("Submit")
+with col2:
+    reset = st.button("Reset")
+
+# Reset 버튼 눌렀을 때 입력창을 완전히 빈 문자열로 초기화
+if reset:
+    seq_input = ""
+    st.experimental_rerun()
+
+# Submit 버튼 눌렀을 때만 계산 실행
+if submit and seq_input:
+    seq = seq_input.strip().upper().replace(" ", "").replace("\n", "")
+
     mw = calc_mw(seq)
     ext = calc_extinction(seq)
     pI = calc_pI(seq)
