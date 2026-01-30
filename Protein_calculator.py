@@ -23,12 +23,13 @@ pKa = {
 # 280nm 흡광계수
 aa_extinction = {'W': 5500, 'Y': 1490, 'C': 125}
 
-def clean_sequence(seq: str) -> str:
-    """입력 서열을 공백 제거 + 대문자로 변환"""
-    return seq.strip().upper().replace(" ", "").replace("\n", "")
-
 def calc_mw(seq):
-    return sum(aa_weights.get(aa, 0) for aa in seq)
+    """분자량 계산: 아미노산 개별 분자량 합 - (펩타이드 결합 수 × 물 분자 질량)"""
+    n = len(seq)
+    total = sum(aa_weights.get(aa, 0) for aa in seq)
+    if n > 1:
+        total -= (n - 1) * 18.015  # 펩타이드 결합 형성 시 빠지는 물(H2O)
+    return total
 
 def calc_extinction(seq):
     counts = Counter(seq)
@@ -57,17 +58,10 @@ def calc_pI(seq):
 # Streamlit UI
 st.title("Protein Calculator")
 
-seq_input = st.text_area("Enter protein sequence (single-letter code):", 
-                         "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE", height=300)
+seq = st.text_area("Enter protein sequence (single-letter code):", 
+                   "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE", height=300)
 
-if seq_input:
-    seq = clean_sequence(seq_input)
-
-    # 잘못된 문자 검사
-    invalid = [aa for aa in seq if aa not in aa_weights]
-    if invalid:
-        st.warning(f"Invalid amino acid codes found: {set(invalid)}")
-
+if seq:
     mw = calc_mw(seq)
     ext = calc_extinction(seq)
     pI = calc_pI(seq)
