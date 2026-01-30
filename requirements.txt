@@ -1,10 +1,6 @@
 streamlit
-<<<<<<< HEAD
 biopython
 pandas
 numpy
-=======
-numpy
 matplotlib
 
->>>>>>> 65e28d33cefa3963efdb199aff0a65df2a7602f1
