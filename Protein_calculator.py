@@ -4,6 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
+
 # 아미노산별 분자량 (Da)
 aa_weights = {
     'A': 89.09, 'R': 174.20, 'N': 132.12, 'D': 133.10,
@@ -96,3 +97,4 @@ if seq:
     ax2.set_ylabel("Net Charge")
     ax2.set_title("Charge vs pH (0 ~ 14)")
     st.pyplot(fig2)
+
