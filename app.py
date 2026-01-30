@@ -58,9 +58,13 @@ st.title("Protein Calculator")
 if "sequence" not in st.session_state:
     st.session_state.sequence = "MKWVTFISLLFLFSSAYSRGVFRRDTHKSEIAHRFKDLGE"
 
-# 입력창 (세션 상태 값 사용)
-seq_input = st.text_area("Enter protein sequence (single-letter code):", 
-                         st.session_state.sequence, height=300)
+# 입력창 (세션 상태 값 사용, key 지정)
+seq_input = st.text_area(
+    "Enter protein sequence (single-letter code):",
+    st.session_state.sequence,
+    height=300,
+    key="seq_input"
+)
 
 # 버튼 두 개
 col1, col2 = st.columns(2)
@@ -69,9 +73,10 @@ with col1:
 with col2:
     reset = st.button("Reset")
 
-# Reset 버튼 → 세션 상태를 빈 문자열로 바꾸고 rerun
+# Reset 버튼 → 입력창과 세션 상태 모두 초기화
 if reset:
     st.session_state.sequence = ""
+    st.session_state.seq_input = ""   # text_area 값도 초기화
     st.rerun()
 
 # Submit 버튼 → 계산 실행
