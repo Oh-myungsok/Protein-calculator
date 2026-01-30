@@ -73,10 +73,9 @@ with col1:
 with col2:
     reset = st.button("Reset")
 
-# Reset 버튼 → 입력창과 세션 상태 모두 초기화
+# Reset 버튼 → 세션 상태 전체 초기화
 if reset:
-    st.session_state.sequence = ""
-    st.session_state.seq_input = ""   # text_area 값도 초기화
+    st.session_state.clear()   # 모든 세션 상태 초기화
     st.rerun()
 
 # Submit 버튼 → 계산 실행
